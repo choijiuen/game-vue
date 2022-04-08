@@ -17,7 +17,7 @@
           </ul>
           <form class="d-flex">
             <router-link to="/login"><button type="button" class="btn btn-primary me-2">로그인</button></router-link>
-            <router-link to="/join"><button type="button" class="btn btn-success">회원가입</button></router-link>
+            <router-link to="/join"><button type="button" class="btn btn-outline-light">회원가입</button></router-link>
           </form>
         </div>
       </div>

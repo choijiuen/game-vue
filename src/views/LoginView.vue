@@ -18,6 +18,7 @@
                 </label>
                 </div>
                 <button class="w-100 btn btn-lg btn-primary" type="submit">로그인</button>
+                <router-link to="/join"><button type="button" class="w-100 btn btn-lg btn-dark mt-1" >회원가입</button></router-link>
             </form>
         </main>
     </div>
