@@ -26,7 +26,7 @@
 
                 <hr class="my-4">
 
-                <button class="w-100 btn btn-dark btn-lg" type="submit">회원가입</button>
+                <button class="w-100 btn btn-dark btn-lg" type="button" @click="join">회원가입</button>
                 </form>
             </div>
             </div>
@@ -37,3 +37,40 @@
 <style>
 @import url('../css/form-validation.css');
 </style>
+
+<script>
+import axios from '../axios/jayeon-axios'
+import router from '@/router';
+export default {
+    methods:{
+        join(){
+            const id = document.getElementById('id').value;
+            const pw = document.getElementById('pw').value;
+            const rePw = document.getElementById('rePw').value;
+            const name = document.getElementById('name').value;
+
+            const user = {
+                userId : id,
+                pw : pw,
+                rePw : rePw,
+                name : name
+            }
+
+            axios.post('/auth/join',user)
+            .then(res => {
+                if(res.data.code === '200'){
+                    alert('회원가입 완료!');
+                    router.push({name:'login'});
+                }else{
+                    alert(res.data.errors[0].msg);
+                    console.error('회원가입 실패');
+                }
+            })
+            .catch(error => {
+                alert('알 수 없는 이유로 실패했습니다!');
+                console.log(error)
+            })
+        }
+    }
+}
+</script>
