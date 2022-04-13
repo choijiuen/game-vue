@@ -13,10 +13,10 @@
                         <input type="text" class="form-control" id="id" placeholder="아이디" value="" required>
                     </div>
                     <div class="col-12">
-                        <input type="text" class="form-control" id="pw" placeholder="비밀번호" value="" required>
+                        <input type="password" class="form-control" id="pw" placeholder="비밀번호" value="" required>
                     </div>
                     <div class="col-12">
-                        <input type="text" class="form-control" id="rePw" placeholder="비밀번호 재입력" value="" required>
+                        <input type="password" class="form-control" id="rePw" placeholder="비밀번호 재입력" value="" required>
                     </div>
                     <div class="col-12">
                         <input type="text" class="form-control" id="name" placeholder="이름" value="" required>
