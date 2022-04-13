@@ -11,7 +11,6 @@
                 <div class="row g-3">
                     <div class="col-12">
                         <input type="text" class="form-control" id="id" placeholder="아이디" value="" required>
-                        <button class="w-100 btn btn-primary btn-lg mt-2" type="submit">중복확인</button>
                     </div>
                     <div class="col-12">
                         <input type="text" class="form-control" id="pw" placeholder="비밀번호" value="" required>
@@ -61,8 +60,14 @@ export default {
                 if(res.data.code === '200'){
                     alert('회원가입 완료!');
                     router.push({name:'login'});
-                }else{
+                }else if(res.data.code === '400'){
                     alert(res.data.errors[0].msg);
+                    console.error('회원가입 실패');
+                }else if(res.data.code === '401'){
+                    alert(res.data.msg);
+                    const target = document.getElementById('id');
+                    target.value = '';
+                    target.focus();
                     console.error('회원가입 실패');
                 }
             })
