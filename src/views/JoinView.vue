@@ -13,10 +13,10 @@
                         <input type="text" class="form-control" id="id" placeholder="아이디" value="" required>
                     </div>
                     <div class="col-12">
-                        <input type="text" class="form-control" id="pw" placeholder="비밀번호" value="" required>
+                        <input type="password" class="form-control" id="pw" placeholder="비밀번호" value="" required>
                     </div>
                     <div class="col-12">
-                        <input type="text" class="form-control" id="rePw" placeholder="비밀번호 재입력" value="" required>
+                        <input type="password" class="form-control" id="rePw" placeholder="비밀번호 재입력" value="" required>
                     </div>
                     <div class="col-12">
                         <input type="text" class="form-control" id="name" placeholder="이름" value="" required>
@@ -55,25 +55,25 @@ export default {
                 name : name
             }
 
-            axios.post('/auth/join',user)
+            axios.post('/member/join',user)
             .then(res => {
                 if(res.data.code === '200'){
                     alert('회원가입 완료!');
                     router.push({name:'login'});
-                }else if(res.data.code === '400'){
-                    alert(res.data.errors[0].msg);
-                    console.error('회원가입 실패');
-                }else if(res.data.code === '401'){
-                    alert(res.data.msg);
-                    const target = document.getElementById('id');
-                    target.value = '';
-                    target.focus();
-                    console.error('회원가입 실패');
                 }
             })
-            .catch(error => {
-                alert('알 수 없는 이유로 실패했습니다!');
-                console.log(error)
+            .catch((err) => {
+                if(err.response.status == 503){
+                    alert('잠시 후 다시 시도해주세요!');
+                }
+                const code = err.response.data.code;
+                if(code == 400){
+                    alert(err.response.data.errors[0].msg);
+                }else if(code == 403){
+                    alert(err.response.data.msg);
+                }
+                console.log();
+                
             })
         }
     }
