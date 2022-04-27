@@ -15,7 +15,8 @@ const routes = [
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
+    component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue'),
+    meta: {auth : true}
   },
   {
     path: '/login',
@@ -32,6 +33,17 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes
+})
+
+router.beforeEach(async (to, from, next)=>{
+  const auth = localStorage.getItem('user');
+
+  if(to.matched.some(r=>r.meta.auth) && !auth){
+    alert('로그인이 필요한 페이지입니다!');
+    next('/login')
+  }else{
+    next()
+  }
 })
 
 export default router
