@@ -16,7 +16,7 @@ export default createStore({
   },
   actions: {  //dispatch
     login:({commit}, _user) =>{
-      jayeon.post('/auth/login',_user)
+      jayeon.post('/member/login',_user)
       .then(res => {
           console.log(res.headers);
           const token = res.headers.token;
