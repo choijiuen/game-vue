@@ -25,6 +25,7 @@
         <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
           <button type="button" class="btn btn-outline-info btn-lg px-4 me-sm-3 fw-bold">Custom button</button>
           <button type="button" class="btn btn-outline-light btn-lg px-4">Secondary</button>
+          <button type="button" class="btn btn-outline-light" @click="test">테스트 버튼</button>
         </div>
       </div>
     </div>
@@ -37,3 +38,29 @@
 <style>
 @import '../css/heroes.css';
 </style>
+
+<script>
+import axios from '../axios/jayeon-axios'
+import router from '@/router';
+export default {
+    methods:{
+        //회원가입
+        test(){
+            axios.get('/member/tokenCheck')
+            .then(res => {
+              console.log(res);
+              if(res.status == '200'){
+                  alert('정상실행');
+              }
+            })
+            .catch((err) => {
+              if(err.response.status == 401){
+                alert('로그인 후 다시 시도해 주세요.');
+                router.push({name:'login'});
+              }
+              console.log(err);
+            })
+        }
+    }
+}
+</script>
