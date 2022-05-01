@@ -1,6 +1,7 @@
 import { createStore } from 'vuex'
 import createPersistedState from 'vuex-persistedstate'
 import axios from '@/axios/jayeon-axios'
+//import router from '@/router'
 
 export default createStore({
   state: {
@@ -12,7 +13,9 @@ export default createStore({
     }
   },
   getters: {
-    
+    getLogin : state => { 
+      return state.user.login;
+    }
   },
   mutations: {  //commit
     setUser(state, _user){
@@ -23,13 +26,15 @@ export default createStore({
     async login({ commit }, _user){
       axios.post('/member/login',_user)
       .then(res => {
-          const user = {
-            id: res.data.id,
-            userId : res.data.user_id,
-            userName: res.data.user_name,
-            login : true
-          };
-          commit('setUser', user);
+        const user = {
+          id: res.data.id,
+          userId : res.data.user_id,
+          userName: res.data.user_name,
+          login : true
+        };
+        commit('setUser', user);
+        //새로고침 말고 반응형으로 만들고 싶음...
+        location.href = '/';
       })
       .catch(error => {
         console.error(error);
