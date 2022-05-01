@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import LoginView from '../views/LoginView.vue'
 import JoinView from '../views/JoinView.vue'
-
+import store from '@/store'
 const routes = [
   {
     path: '/',
@@ -36,9 +36,9 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to, from, next)=>{
-  const auth = localStorage.getItem('user');
+  const userId = store.state.user.userId;
 
-  if(to.matched.some(r=>r.meta.auth) && !auth){
+  if(to.matched.some(r=>r.meta.auth) && userId == null){
     alert('로그인이 필요한 페이지입니다!');
     next('/login')
   }else{

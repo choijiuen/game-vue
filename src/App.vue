@@ -16,14 +16,13 @@
             </li>
           </ul>
           <form class="d-flex">
-            <router-link to="/login"><button type="button" class="btn btn-primary me-2">로그인</button></router-link>
-            <router-link to="/login"><button type="button" class="btn btn-primary me-2">로그아웃</button></router-link>
+            <router-link v-if="login == false" to="/login"><button type="button" class="btn btn-primary me-2">로그인</button></router-link>
+            <button v-else  type="button" class="btn btn-primary me-2">로그아웃</button>
             <router-link to="/join"><button type="button" class="btn btn-outline-light">회원가입</button></router-link>
           </form>
         </div>
       </div>
     </nav>
-
     <router-view/>
   </body>
 </template>
@@ -44,3 +43,15 @@
   }
 }
 </style>
+
+<script>
+
+export default {
+  data(){
+    
+    return{
+      login:false
+    }
+  }
+}
+</script>

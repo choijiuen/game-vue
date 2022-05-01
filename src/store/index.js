@@ -1,37 +1,46 @@
-import jayeon from '../axios/jayeon-axios'
 import { createStore } from 'vuex'
+import createPersistedState from 'vuex-persistedstate'
+import axios from '@/axios/jayeon-axios'
 
 export default createStore({
   state: {
-    user: null
+    user: {
+      id : null,
+      userId: null,
+      userName: null,
+      login : false
+    }
   },
   getters: {
+    
   },
   mutations: {  //commit
     setUser(state, _user){
       state.user = _user;
-      localStorage.setItem('user', JSON.stringify(_user));
-      jayeon.defaults.headers.common['Authorization'] = `Bearer ${_user.token}`;
     }
   },
   actions: {  //dispatch
-    login:({commit}, _user) =>{
-      jayeon.post('/member/login',_user)
+    async login({ commit }, _user){
+      axios.post('/member/login',_user)
       .then(res => {
-          console.log(res.headers);
-          const token = res.headers.token;
-          const userId = res.headers.user_id;
           const user = {
-            userId : userId,
-            token : token
+            id: res.data.id,
+            userId : res.data.user_id,
+            userName: res.data.user_name,
+            login : true
           };
           commit('setUser', user);
       })
       .catch(error => {
-          console.log(error);
+        console.error(error);
+        alert('로그인 처리 중 알수 없는 오류 발생');
       })
     }
   },
   modules: {
-  }
+  },
+  plugins: [
+    createPersistedState({
+    })
+  ]
 })
