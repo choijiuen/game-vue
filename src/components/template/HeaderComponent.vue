@@ -21,7 +21,7 @@
             </div>
             <div v-else>
               <button type="button" class="btn btn-secondary me-2">{{$store.state.user.userName}}</button>
-              <button type="button" class="btn btn-primary me-2">로그아웃</button>
+              <button type="button" @click="logout" class="btn btn-primary me-2">로그아웃</button>
             </div>
           </form>
         </div>
@@ -62,6 +62,10 @@ export default {
     });
     return { state };
   },
-  
+  methods:{
+    logout(){
+      this.$store.dispatch('logout');
+    }
+  },
 }
 </script>
