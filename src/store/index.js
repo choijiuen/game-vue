@@ -18,8 +18,18 @@ export default createStore({
     }
   },
   mutations: {  //commit
-    setUser(state, _user){
+    setUser(state, _user) {
       state.user = _user;
+    },
+    logout: (state) => {
+      const user = {
+        id: null,
+        userId : null,
+        userName: null,
+        login : false
+      };
+      state.user = user;
+      location.href = '/';
     }
   },
   actions: {  //dispatch
@@ -40,6 +50,9 @@ export default createStore({
         console.error(error);
         alert('로그인 처리 중 알수 없는 오류 발생');
       })
+    },
+    async logout({ commit }) { 
+      commit('logout');
     }
   },
   modules: {
