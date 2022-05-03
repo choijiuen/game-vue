@@ -15,7 +15,7 @@
             </li>
           </ul>
           <form class="d-flex">
-            <div v-if="!state.user.login">
+            <div v-if="!login">
               <router-link  to="/login"><button type="button" class="btn btn-primary me-2">로그인</button></router-link>
               <router-link to="/join"><button type="button" class="btn btn-outline-light">회원가입</button></router-link>
             </div>
@@ -47,25 +47,18 @@
 </style>
 
 <script>
-import store from '@/store'
-import { reactive } from "vue";
 
 export default {
   name: 'HeaderComponent',
-  setup() {
-    const state = reactive({
-      user: {
-        id: null,
-        name: "",
-        login: store.state.user.login
-      }
-    });
-    return { state };
-  },
   methods:{
     logout(){
       this.$store.dispatch('logout');
     }
   },
+  computed:{
+    login(){
+      return this.$store.getters.getLogin;
+    }
+  }
 }
 </script>

@@ -1,7 +1,7 @@
 import { createStore } from 'vuex'
 import createPersistedState from 'vuex-persistedstate'
 import axios from '@/axios/jayeon-axios'
-//import router from '@/router'
+import router from '@/router'
 
 export default createStore({
   state: {
@@ -29,7 +29,6 @@ export default createStore({
         login : false
       };
       state.user = user;
-      location.href = '/';
     }
   },
   actions: {  //dispatch
@@ -43,8 +42,7 @@ export default createStore({
           login : true
         };
         commit('setUser', user);
-        //새로고침 말고 반응형으로 만들고 싶음...
-        location.href = '/';
+        router.push('/');
       })
       .catch(error => {
         console.error(error);
