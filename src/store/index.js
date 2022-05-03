@@ -45,8 +45,11 @@ export default createStore({
         router.push('/');
       })
       .catch(error => {
-        console.error(error);
-        alert('로그인 처리 중 알수 없는 오류 발생');
+        if (error.response.status == 401) {
+          alert('아이디 혹은 비밀번호를 확인해주세요!');
+        } else { 
+          alert('로그인 처리 중 알수 없는 오류 발생');
+        }
       })
     },
     async logout({ commit }) { 
