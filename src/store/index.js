@@ -29,6 +29,7 @@ export default createStore({
         login : false
       };
       state.user = user;
+      alert('로그아웃 되었습니다.');
     }
   },
   actions: {  //dispatch
