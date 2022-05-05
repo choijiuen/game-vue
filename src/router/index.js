@@ -9,6 +9,7 @@ const routes = [
     name: 'home',
     component: HomeView
   },
+  //로그인 테스트
   {
     path: '/about',
     name: 'about',
@@ -18,16 +19,25 @@ const routes = [
     component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue'),
     meta: {auth : true}
   },
+  //로그인
   {
     path: '/login',
     name: 'login',
     component: LoginView
   },
+  //회원가입
   {
     path: '/join',
     name: 'join',
     component: JoinView
-  }
+  },
+  //점심 랜덤 뽑기
+  {
+    path: '/eats',
+    name: 'eats',
+    component: () => import('../views/eats/EatsView.vue'),
+    meta: {auth : false}
+  },
 ]
 
 const router = createRouter({
