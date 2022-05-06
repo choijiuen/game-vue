@@ -18,18 +18,27 @@
   </div>
 
   <div class="b-example-divider mb-0"></div>
+  <GoogleMap api-key="AIzaSyDd4q1fnJ_2BBXJo8TgMA1-0Csgf_y6Ya8" style="width: 100%; height: 500px" :center="center" :zoom="15">
+    <Marker :options="{ position: center }" />
+  </GoogleMap>
 </template>
 
 <script>
+import { GoogleMap, Marker } from "vue3-google-map";
+
 export default {
   name: 'EatsComponent',
   props: {
     msg: String
   },
+  components: { GoogleMap, Marker},
+
   data(){
+    const center = { lat: 0, lng: 0 };
     return {
         latitude : 0,
         longitude : 0,
+        center
     }
   },
   methods:{
@@ -43,14 +52,15 @@ export default {
             //console.log(position.timestamp);  //위치 변경을 반환한 시간
             this.latitude = position.coords.latitude;
             this.longitude = position.coords.longitude;
+            this.center.lat = position.coords.latitude;
+            this.center.lng = position.coords.longitude;
         });
     },
     locationView(){
         window.open(`https://www.openstreetmap.org/#map=17/${this.latitude}/${this.longitude}`);
     }
     
-  }
-
+  },
 }
 
 
