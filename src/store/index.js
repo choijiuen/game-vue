@@ -1,7 +1,7 @@
 import { createStore } from 'vuex'
 import createPersistedState from 'vuex-persistedstate'
 import axios from '@/axios/jayeon-axios'
-//import router from '@/router'
+import router from '@/router'
 
 export default createStore({
   state: {
@@ -29,7 +29,7 @@ export default createStore({
         login : false
       };
       state.user = user;
-      location.href = '/';
+      alert('로그아웃 되었습니다.');
     }
   },
   actions: {  //dispatch
@@ -43,12 +43,14 @@ export default createStore({
           login : true
         };
         commit('setUser', user);
-        //새로고침 말고 반응형으로 만들고 싶음...
-        location.href = '/';
+        router.push('/');
       })
       .catch(error => {
-        console.error(error);
-        alert('로그인 처리 중 알수 없는 오류 발생');
+        if (error.response.status == 401) {
+          alert('아이디 혹은 비밀번호를 확인해주세요!');
+        } else { 
+          alert('로그인 처리 중 알수 없는 오류 발생');
+        }
       })
     },
     async logout({ commit }) { 

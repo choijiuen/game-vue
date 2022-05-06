@@ -1,5 +1,5 @@
 <template>
-    <join-component></join-component>
+    <Join></Join>
 </template>
 
 <style>
@@ -7,11 +7,11 @@
 </style>
 
 <script>
-import joinComponent from '@/components/member/Join.vue'
+import Join from '@/components/member/Join.vue'
 
 export default {
     components:{
-        joinComponent
+        Join
     }
 }
 </script>
