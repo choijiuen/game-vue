@@ -6,6 +6,7 @@
         <p class="fs-5 mb-4">정상 실행이 된다면 로그인 인증 후 정상적으로 API와 통신 중임</p>
         <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
           <button class="btn btn-secondary" @click="location">현재 위치로</button>
+          <button class="btn btn-secondary" @click="execDaumPostcode">주소검색</button>
         </div>
       </div>
     </div>
@@ -18,6 +19,7 @@
 
 <script>
 import { GoogleMap } from "vue3-google-map";
+import axios from "axios";
 
 export default {
   name: 'EatsComponent',
@@ -26,7 +28,7 @@ export default {
   },
   components: { GoogleMap },
   data() {
-    const center = { lat: 37.38231400000, lng: 127.11961300000 };
+    const center = { lat: 37.382314, lng: 127.119613 };
     return { center };
   },
   methods:{
@@ -37,17 +39,48 @@ export default {
             throw msg;
         }
         navigator.geolocation.getCurrentPosition(position => {
-            //console.log(position.timestamp);  //위치 변경을 반환한 시간
+            console.log(typeof position.coords.latitude);
+            console.log(typeof position.coords.longitude);
             this.center = {
               lat : position.coords.latitude,
               lng : position.coords.longitude
             }
         });
     },
-    locationView(){
-        window.open(`https://www.openstreetmap.org/#map=17/${this.latitude}/${this.longitude}`);
+    execDaumPostcode() {
+      new window.daum.Postcode({
+        oncomplete: (data) => {
+          this.kakaoAddress(data.address);
+        },
+      }).open();
+    },
+    kakaoAddress(address){
+      axios.get('https://dapi.kakao.com/v2/local/search/address',{
+        params:{
+          query: address
+        },
+        headers:{
+          Authorization : 'KakaoAK '+ process.env.VUE_APP_KAKAO_REST_API_KEY
+        }
+      })
+      .then(res=>{
+        console.log(res);
+        const roadAddress = res.data.documents[0].address;
+        this.setCenter(roadAddress.x,roadAddress.y);
+      })
+      .catch(err=>{
+        alert('주소를 불러오는데 실패했습니다...');
+        console.log(err);
+      });
+    },
+    setCenter(x, y){
+      const xx = Number(x);
+      const yy = Number(y);
+      this.center = {
+        lat : yy,
+        lng : xx
+      }
     }
-    
   },
 }
 </script>
