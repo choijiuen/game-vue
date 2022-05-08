@@ -1,5 +1,9 @@
 <template>
   <div class="bg-dark text-secondary px-4 py-5 text-center">
+    <loading v-model:active="isLoading"
+                 :can-cancel="false"
+                 :on-cancel="onCancel"
+                 :is-full-page="fullPage"/>
     <div class="py-5">
       <h1 class="display-5 fw-bold text-white">뽑기</h1>
       <div class="col-lg-6 mx-auto">
@@ -17,13 +21,13 @@
           <div class="col-md-6"><input class="form-control text-center" type="text" id="radius" placeholder="거리 입력 (m기준 / 기본 500m 반경, 최대 50,000m 검색)"/></div>
         </div>
         <div class="d-grid gap-2 d-sm-flex justify-content-sm-center row mt-1">
-          <div class="col-md-3"><button class="btn btn-secondary" @click="makeMarkers">검색</button></div>
+          <!-- <div class="col-md-3"><button class="btn btn-secondary" @click="makeMarkers">검색</button></div> -->
         </div>
 
         <p class="fs-5">3. 뽑기</p>
         <div class="d-grid gap-2 d-sm-flex justify-content-sm-center row mt-1">
           <div class="col-md-6"><button class="btn btn-secondary" @click="makeMarkersSelect">바로 뽑기</button></div>
-          <div class="col-md-6"><button class="btn btn-secondary" @click="randomSelect">뽑기</button></div>
+          <div class="col-md-6"><button class="btn btn-secondary" @click="randomSelect">다시 뽑기</button></div>
         </div>
       </div>
     </div>
@@ -61,19 +65,21 @@
 import { GoogleMap, Marker, InfoWindow } from "vue3-google-map";
 import axios from "axios";
 import jayeon from "@/axios/jayeon-axios";
+import Loading from 'vue-loading-overlay';
+import 'vue-loading-overlay/dist/vue-loading.css';
 
 export default {
   name: 'EatsComponent',
   props: {
     msg: String
   },
-  components: { GoogleMap, Marker, InfoWindow },
+  components: { GoogleMap, Marker, InfoWindow, Loading },
   data() {
     const googleApiKey = process.env.VUE_APP_GOOGLE_API_KEY;
     const center = { lat: 37.382314, lng: 127.119613 };
     const markers = [
     ]
-    return { googleApiKey, center, markers };
+    return { googleApiKey, center, markers, isLoading: false, fullPage: true };
   },
   methods:{
     //지도 출력
@@ -193,10 +199,14 @@ export default {
       const random = Math.floor( ( Math.random() * range ));
       document.querySelectorAll('[role=button]')[random].querySelector('area').click();
     },
+    //바로 뽑기
     makeMarkersSelect(){
-
+      this.isLoading = true;
       this.makeMarkers();
-
+      setTimeout(() => {
+        this.randomSelect();
+        this.isLoading = false;
+      }, 1000)
     }
   },
   
