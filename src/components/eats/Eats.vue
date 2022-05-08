@@ -2,12 +2,12 @@
   <div class="bg-dark text-secondary px-4 py-5 text-center">
     <loading v-model:active="isLoading"
                  :can-cancel="false"
-                 :on-cancel="onCancel"
                  :is-full-page="fullPage"/>
     <div class="py-5">
       <h1 class="display-5 fw-bold text-white">뽑기</h1>
       <div class="col-lg-6 mx-auto">
         <p class="fs-5 mb-4">뭐든 현재 위치를 기준으로 랜덤으로 추천해줍니다</p>
+        <p class="fs-8 mb-4">(애플 사파리는 지원되지 않습니다...)</p>
         
         <p class="fs-5">1. 위치 선택</p>
         <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
@@ -149,7 +149,6 @@ export default {
       }
       await jayeon.post('/google/places',data)
       .then(async res =>{
-        console.log(res);
         const result = res.data;
         if(result.status == 'ZERO_RESULTS'){
           alert('일치하는 결과가 존재하지 않습니다!');
@@ -203,10 +202,15 @@ export default {
     makeMarkersSelect(){
       this.isLoading = true;
       this.makeMarkers();
-      setTimeout(() => {
+      try{
+        setTimeout(() => {
+          this.randomSelect();
+          this.isLoading = false;
+        }, 5000)
+      }catch(err){
+        alert(err);
         this.isLoading = false;
-        this.randomSelect();
-      }, 3000)
+      }
     }
   },
   
