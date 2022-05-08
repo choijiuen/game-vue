@@ -204,9 +204,9 @@ export default {
       this.isLoading = true;
       this.makeMarkers();
       setTimeout(() => {
-        this.randomSelect();
         this.isLoading = false;
-      }, 1000)
+        this.randomSelect();
+      }, 3000)
     }
   },
   
