@@ -10,16 +10,20 @@
           <button class="btn btn-secondary" @click="location">현재 위치로</button>
           <button class="btn btn-secondary" @click="execDaumPostcode">주소검색</button>
         </div>
-        <p>lat : {{center.lat}}</p>
-        <p>lng : {{center.lng}}</p>
 
-        <p class="fs-5">2. 키워드 입력</p>
+        <p class="fs-5">2. 검색</p>
         <div class="d-grid gap-2 d-sm-flex justify-content-sm-center row">
-          <div class="col-md-9"><input class="form-control" type="text" id="keyword" placeholder="ex) 대학교, 병원, 중국집, 한식 ..."/></div>
-          <div class="col-md-6"><input class="form-control" type="text" id="radius" placeholder="거리 입력 (m기준 / 기본 500m 반경, 최대 50,000m 검색)"/></div>
+          <div class="col-md-6"><input class="form-control text-center" type="text" id="keyword" placeholder="ex) 대학교, 병원, 중국집, 한식 ..."/></div>
+          <div class="col-md-6"><input class="form-control text-center" type="text" id="radius" placeholder="거리 입력 (m기준 / 기본 500m 반경, 최대 50,000m 검색)"/></div>
         </div>
         <div class="d-grid gap-2 d-sm-flex justify-content-sm-center row mt-1">
           <div class="col-md-3"><button class="btn btn-secondary" @click="makeMarkers">검색</button></div>
+        </div>
+
+        <p class="fs-5">3. 뽑기</p>
+        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center row mt-1">
+          <div class="col-md-6"><button class="btn btn-secondary" @click="makeMarkersSelect">바로 뽑기</button></div>
+          <div class="col-md-6"><button class="btn btn-secondary" @click="randomSelect">뽑기</button></div>
         </div>
       </div>
     </div>
@@ -30,10 +34,19 @@
     <div :key="index" v-for="(m, index) in markers">
       <Marker :options="m">
         <InfoWindow>
-          <div>
-            <h1 class="firstHeading">{{m.name}}</h1>
-            <div>
-              <p>
+          <div class="card">
+            <div class="card-header">
+              영업 상태 : {{m.opennow}}
+            </div>
+            <div class="card-body">
+              <h5 class="card-title">{{m.name}}</h5>
+              <p class="card-text">
+                평점 : {{m.rating}} (총 리뷰 {{m.userRatingsTotal}} 건)
+              </p>
+              <p class="card-text">
+                가격대 : {{m.priceLevel}}
+              </p>
+              <p class="card-text">
                 <b>{{m.name}}</b>{{m.content}}
               </p>
             </div>
@@ -114,7 +127,7 @@ export default {
       }
     },
     //지도에 마크 찍어내기
-    makeMarkers(){
+    async makeMarkers(){
       const keyword = document.getElementById('keyword').value;
       const radius = document.getElementById('radius').value;
       if(keyword == ''){
@@ -128,8 +141,8 @@ export default {
         keyword : keyword,
         radius : radius,
       }
-      jayeon.post('/google/places',data)
-      .then(res =>{
+      await jayeon.post('/google/places',data)
+      .then(async res =>{
         console.log(res);
         const result = res.data;
         if(result.status == 'ZERO_RESULTS'){
@@ -137,18 +150,58 @@ export default {
           return;
         }
         const markers = [];
-        result.results.forEach(r => {
-          const marker = { position : r.geometry.location, label: r.name.substring(0,1), title: r.name, name: r.name, content: r.vicinity};
+
+        await result.results.forEach(r => {
+          let opennow = '알 수 없음';
+          if(typeof r.opening_hours != 'undefined') opennow = r.opening_hours.open_now == true ? '열림':'닫힘';
+
+          let priceLevel = '매우 저렴';
+          if(typeof r.price_level != 'undefined'){
+            priceLevel = r.price_level == 1 ? '매우 저렴' :
+              r.price_level == 2 ? '저렴' :
+              r.price_level == 3 ? '보통' :
+              r.price_level == 4 ? '비쌈' : 
+              r.price_level == 5 ? '매우 비쌈' : '알 수 없음';
+          }
+
+          const marker = {
+            position : r.geometry.location, 
+            label: r.name.substring(0,1),
+            title: r.name, 
+            opennow: opennow, 
+            name: r.name, 
+            content: r.vicinity, 
+            rating : r.rating, 
+            userRatingsTotal : r.user_ratings_total,
+            priceLevel : priceLevel
+          };
           markers.push(marker);
         });
         this.markers = markers;
-
       })
       .catch(err=>{
         alert('알 수 없는 오류 발생');
-        console.log(err);
+        console.err(err);
       });
     },
-  }
+    //마커중 랜덤으로 뽑기
+    randomSelect(){
+      const range = document.querySelectorAll('[role=button]').length;
+      if(range == 0){
+        return ;
+      }
+      const random = Math.floor( ( Math.random() * range ));
+      document.querySelectorAll('[role=button]')[random].querySelector('area').click();
+    },
+    makeMarkersSelect(){
+
+      this.makeMarkers();
+
+    }
+  },
+  
+  beforeMount(){
+    this.location();
+  },
 }
 </script>
