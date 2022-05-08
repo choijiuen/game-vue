@@ -4,9 +4,9 @@ module.exports = defineConfig({
   devServer:{
     allowedHosts: "all",
     proxy:{
-        "/api":{
-            target: process.env.VUE_APP_API_URL
-        }
+      "/api":{
+        target: process.env.VUE_APP_API_URL
+      },
     }
   }  
 })
