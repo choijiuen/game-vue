@@ -30,7 +30,6 @@
         <p class="fs-5">3. 뽑기</p>
         <div class="d-grid gap-2 d-sm-flex justify-content-sm-center row mt-1">
           <div class="col-md-6"><button class="btn btn-secondary" @click="makeMarkersSelect">바로 뽑기</button></div>
-          <div class="col-md-6"><button class="btn btn-secondary" @click="randomSelect">다시 뽑기</button></div>
         </div>
       </div>
     </div>
