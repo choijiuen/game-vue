@@ -7,15 +7,18 @@
       <h1 class="display-5 fw-bold text-white">뽑기</h1>
       <div class="col-lg-6 mx-auto">
         <p class="fs-5 mb-4">뭐든 현재 위치를 기준으로 랜덤으로 추천해줍니다</p>
-        <p class="fs-8 mb-4">(애플 사파리는 지원되지 않습니다...)</p>
+        <p class="fs-8 mb-4">(아이폰 사파리는 지원되지 않습니다...)</p>
         
         <p class="fs-5">1. 위치 선택</p>
         <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
           <button class="btn btn-secondary" @click="location">현재 위치로</button>
           <button class="btn btn-secondary" @click="execDaumPostcode">주소검색</button>
         </div>
+        <div>
+          현재 기준 위치 : lat : {{center.lat}} lng : {{center.lng}}
+        </div>
 
-        <p class="fs-5">2. 검색</p>
+        <p class="fs-5 mt-2">2. 검색</p>
         <div class="d-grid gap-2 d-sm-flex justify-content-sm-center row">
           <div class="col-md-6"><input class="form-control text-center" type="text" id="keyword" placeholder="ex) 대학교, 병원, 중국집, 한식 ..."/></div>
           <div class="col-md-6"><input class="form-control text-center" type="text" id="radius" placeholder="거리 입력 (m기준 / 기본 500m 반경, 최대 50,000m 검색)"/></div>
