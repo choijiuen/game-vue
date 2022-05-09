@@ -34,10 +34,23 @@
   </div>
 
   <div class="b-example-divider mb-0"></div>
-  <GoogleMap api-key="AIzaSyDd4q1fnJ_2BBXJo8TgMA1-0Csgf_y6Ya8" style="width: 100%; height: 500px" :center="center" :zoom="15">
-    <div :key="index" v-for="(m, index) in markers">
-      <Marker :options="m">
-        <InfoWindow>
+  <GMapMap
+      :center="center"
+      :zoom="17"
+      style="width: 100%; height: 500px"
+  >
+    <GMapCluster>
+      <GMapMarker
+          :key="index"
+          v-for="(m, index) in markers"
+          :position="m.position"
+          :clickable="true"
+          :draggable="false"
+          @click="center=m.position"
+      >
+        <GMapInfoWindow
+          :opened="m.infoWindoOpen"
+        >
           <div class="card">
             <div class="card-header">
               영업 상태 : {{m.opennow}}
@@ -55,14 +68,13 @@
               </p>
             </div>
           </div>
-        </InfoWindow>
-      </Marker>
-    </div>
-  </GoogleMap>
+        </GMapInfoWindow>
+      </GMapMarker>
+    </GMapCluster>
+  </GMapMap>
 </template>
 
 <script>
-import { GoogleMap, Marker, InfoWindow } from "vue3-google-map";
 import axios from "axios";
 import jayeon from "@/axios/jayeon-axios";
 import Loading from 'vue-loading-overlay';
@@ -73,13 +85,11 @@ export default {
   props: {
     msg: String
   },
-  components: { GoogleMap, Marker, InfoWindow, Loading },
+  components: { Loading },
   data() {
-    const googleApiKey = process.env.VUE_APP_GOOGLE_API_KEY;
-    const center = { lat: 37.382314, lng: 127.119613 };
-    const markers = [
-    ]
-    return { googleApiKey, center, markers, isLoading: false, fullPage: true };
+    const center = {lat: 37.382314, lng: 127.119613};
+    const markers = [];
+    return {center, markers, isLoading: false, fullPage: true};
   },
   methods:{
     //지도 출력
@@ -155,8 +165,10 @@ export default {
           return;
         }
         const markers = [];
+        const range = result.results.length;
+        const random = Math.floor( ( Math.random() * range ));
 
-        await result.results.forEach(r => {
+        await result.results.forEach((r, index) => {
           let opennow = '알 수 없음';
           if(typeof r.opening_hours != 'undefined') opennow = r.opening_hours.open_now == true ? '열림':'닫힘';
 
@@ -168,7 +180,8 @@ export default {
               r.price_level == 4 ? '비쌈' : 
               r.price_level == 5 ? '매우 비쌈' : '알 수 없음';
           }
-
+          let infoWindoOpen = false;
+          if(index == random) infoWindoOpen =true;
           const marker = {
             position : r.geometry.location, 
             label: r.name.substring(0,1),
@@ -178,7 +191,8 @@ export default {
             content: r.vicinity, 
             rating : r.rating, 
             userRatingsTotal : r.user_ratings_total,
-            priceLevel : priceLevel
+            priceLevel : priceLevel,
+            infoWindoOpen : infoWindoOpen
           };
           markers.push(marker);
         });
@@ -189,15 +203,6 @@ export default {
         console.err(err);
       });
     },
-    //마커중 랜덤으로 뽑기
-    randomSelect(){
-      const range = document.querySelectorAll('[role=button]').length;
-      if(range == 0){
-        return ;
-      }
-      const random = Math.floor( ( Math.random() * range ));
-      document.querySelectorAll('[role=button]')[random].querySelector('area').click();
-    },
     //바로 뽑기
     makeMarkersSelect(){
       this.isLoading = true;
@@ -206,7 +211,7 @@ export default {
         setTimeout(() => {
           this.randomSelect();
           this.isLoading = false;
-        }, 5000)
+        }, 1000)
       }catch(err){
         alert(err);
         this.isLoading = false;
