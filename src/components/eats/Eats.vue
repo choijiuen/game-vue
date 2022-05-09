@@ -34,43 +34,41 @@
   </div>
 
   <div class="b-example-divider mb-0"></div>
-  <GMapMap
+  <GMapMap id="googleMap"
       :center="center"
       :zoom="17"
       style="width: 100%; height: 500px"
   >
-    <GMapCluster>
-      <GMapMarker
-          :key="index"
-          v-for="(m, index) in markers"
-          :position="m.position"
-          :clickable="true"
-          :draggable="false"
-          @click="center=m.position"
+    <GMapMarker
+        :key="index"
+        v-for="(m, index) in markers"
+        :position="m.position"
+        :clickable="true"
+        :draggable="false"
+        @click="openMarker(m.idx)"
+    >
+      <GMapInfoWindow
+        :opened="openedMarkerID === m.idx || m.infoWindoOpen"
       >
-        <GMapInfoWindow
-          :opened="m.infoWindoOpen"
-        >
-          <div class="card">
-            <div class="card-header">
-              영업 상태 : {{m.opennow}}
-            </div>
-            <div class="card-body">
-              <h5 class="card-title">{{m.name}}</h5>
-              <p class="card-text">
-                평점 : {{m.rating}} (총 리뷰 {{m.userRatingsTotal}} 건)
-              </p>
-              <p class="card-text">
-                가격대 : {{m.priceLevel}}
-              </p>
-              <p class="card-text">
-                <b>{{m.name}}</b>{{m.content}}
-              </p>
-            </div>
+        <div class="card">
+          <div class="card-header">
+            영업 상태 : {{m.opennow}}
           </div>
-        </GMapInfoWindow>
-      </GMapMarker>
-    </GMapCluster>
+          <div class="card-body">
+            <h5 class="card-title">{{m.name}}</h5>
+            <p class="card-text">
+              평점 : {{m.rating}} (총 리뷰 {{m.userRatingsTotal}} 건)
+            </p>
+            <p class="card-text">
+              가격대 : {{m.priceLevel}}
+            </p>
+            <p class="card-text">
+              <b>{{m.name}}</b>{{m.content}}
+            </p>
+          </div>
+        </div>
+      </GMapInfoWindow>
+    </GMapMarker>
   </GMapMap>
 </template>
 
@@ -89,7 +87,7 @@ export default {
   data() {
     const center = {lat: 37.382314, lng: 127.119613};
     const markers = [];
-    return {center, markers, isLoading: false, fullPage: true};
+    return {center, markers, isLoading: false, fullPage: true, openedMarkerID : null};
   },
   methods:{
     //지도 출력
@@ -183,6 +181,7 @@ export default {
           let infoWindoOpen = false;
           if(index == random) infoWindoOpen =true;
           const marker = {
+            idx : index,
             position : r.geometry.location, 
             label: r.name.substring(0,1),
             title: r.name, 
@@ -209,15 +208,19 @@ export default {
       this.makeMarkers();
       try{
         setTimeout(() => {
-          this.randomSelect();
           this.isLoading = false;
         }, 1000)
       }catch(err){
         alert(err);
         this.isLoading = false;
       }
+    },
+    //marker open infoWindow
+    openMarker(idx){
+      this.openedMarkerID = idx;
     }
   },
+  
   
   beforeMount(){
     this.location();
