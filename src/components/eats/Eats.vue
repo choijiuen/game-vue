@@ -1,77 +1,88 @@
 <template>
-  <div class="bg-dark text-secondary px-4 py-5 text-center">
-    <loading v-model:active="isLoading"
-                 :can-cancel="false"
-                 :is-full-page="fullPage"/>
-    <div class="py-5">
-      <h1 class="display-5 fw-bold text-white">뽑기</h1>
-      <div class="col-lg-6 mx-auto">
-        <p class="fs-5 mb-4">뭐든 현재 위치를 기준으로 랜덤으로 추천해줍니다</p>
-        <p class="fs-8 mb-4">(아이폰 사파리는 지원되지 않습니다...)</p>
-        
-        <p class="fs-5">1. 위치 선택</p>
-        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-          <button class="btn btn-secondary" @click="location">현재 위치로</button>
-          <button class="btn btn-secondary" @click="execDaumPostcode">주소검색</button>
+  <div class="container px-4 py-5">
+    <h2 class="pb-2 border-bottom">사용법 안내</h2>
+    <div class="row row-cols-1 row-cols-lg-2 align-items-stretch g-4 py-5">
+      <div class="col">
+        <div class="card card-cover h-100 overflow-hidden text-white bg-dark rounded-5 shadow-lg">
+          <div class="d-flex flex-column h-100 p-5 pb-3 text-white text-shadow-1">
+            <h2 class="mb-4 display-6 lh-1 fw-bold">1. 위치</h2>
+            <p class="fs-5">위치를 선택해주세요.</p>
+            <p class="fs-6 mb-4 text-secondary">(아이폰 사파리는 지원되지 않습니다...)</p>
+            <button class="btn btn-secondary" @click="location">현재 위치</button>
+            <button class="btn btn-primary mt-1" @click="execDaumPostcode">주소검색</button>
+            <ul class="d-flex list-unstyled mt-auto text-secondary">
+              <li class="me-auto">
+              </li>
+              <li class="d-flex align-items-center me-3">
+                <svg class="bi me-2" width="1em" height="1em"><use xlink:href="#geo-fill"/></svg>
+                <small>lat : {{center.lat}}</small>
+              </li>
+              <li class="d-flex align-items-center">
+                <svg class="bi me-2" width="1em" height="1em"><use xlink:href="#calendar3"/></svg>
+                <small>lng : {{center.lng}}</small>
+              </li>
+            </ul>
+          </div>
         </div>
-        <div>
-          현재 기준 위치 : lat : {{center.lat}} lng : {{center.lng}}
+      </div>
+      <div class="col">
+        <div class="card card-cover h-100 overflow-hidden text-white bg-dark rounded-5 shadow-lg">
+          <div class="d-flex flex-column h-100 p-5 pb-3 text-white text-shadow-1">
+            <h2 class="mb-4 display-6 lh-1 fw-bold">2. 검색</h2>
+            <p class="fs-5">검색어를 입력해주세요.</p>
+            <div class="col-md-12"><input class="form-control text-center" type="text" id="keyword" v-on:keyup.enter="makeMarkersSelect" placeholder="ex) 대학교, 병원, 중국집, 한식 ..."/></div>
+            <div class="col-md-12 mt-1 mb-1"><input class="form-control text-center" type="number" v-on:keyup.enter="makeMarkersSelect" id="radius" placeholder="거리 입력 (m기준 / 기본 500m 반경, 최대 50,000m 검색)"/></div>
+            <button class="btn btn-primary" @click="makeMarkersSelect">뽑기</button>
+            <ul class="d-flex list-unstyled mt-auto">
+              <li class="me-auto">
+              </li>
+              <li class="d-flex align-items-center me-3">
+                <svg class="bi me-2" width="1em" height="1em"><use xlink:href="#geo-fill"/></svg>
+              </li>
+              <li class="d-flex align-items-center">
+                <svg class="bi me-2" width="1em" height="1em"><use xlink:href="#calendar3"/></svg>
+              </li>
+            </ul>
+          </div>
         </div>
+      </div>
+    </div>
 
-        <p class="fs-5 mt-2">2. 검색</p>
-        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center row">
-          <div class="col-md-6"><input class="form-control text-center" type="text" id="keyword" placeholder="ex) 대학교, 병원, 중국집, 한식 ..."/></div>
-          <div class="col-md-6"><input class="form-control text-center" type="text" id="radius" placeholder="거리 입력 (m기준 / 기본 500m 반경, 최대 50,000m 검색)"/></div>
-        </div>
-        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center row mt-1">
-          <!-- <div class="col-md-3"><button class="btn btn-secondary" @click="makeMarkers">검색</button></div> -->
-        </div>
-
-        <p class="fs-5">3. 뽑기</p>
-        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center row mt-1">
-          <div class="col-md-6"><button class="btn btn-secondary" @click="makeMarkersSelect">바로 뽑기</button></div>
+    <div class="row row-cols-1 row-cols-lg-1 align-items-stretch">
+      <div class="col">
+        <div class="card card-cover h-100 overflow-hidden rounded-5 shadow-lg">
+          <div class="d-flex flex-column h-100  text-shadow-1">
+            <GMapMap id="googleMap" :center="center" :zoom="16" style="width: 100%; height: 500px">
+              <GMapMarker :key="index" v-for="(m, index) in markers" :position="m.position" :clickable="true" :draggable="false" @click="openMarker(m.idx)">
+                <GMapInfoWindow :opened="openedMarkerID === m.idx">
+                  <div class="card">
+                    <div class="card-header">
+                      영업 상태 : {{m.opennow}}
+                    </div>
+                    <div class="card-body">
+                      <h5 class="card-title">{{m.name}}</h5>
+                      <p class="card-text">
+                        평점 : {{m.rating}} (총 리뷰 {{m.userRatingsTotal}} 건)
+                      </p>
+                      <p class="card-text">
+                        가격대 : {{m.priceLevel}}
+                      </p>
+                      <p class="card-text">
+                        <b>{{m.name}}</b>{{m.content}}
+                      </p>
+                      <button type="button" class="btn btn-secondary">버튼</button>
+                    </div>
+                  </div>
+                </GMapInfoWindow>
+              </GMapMarker>
+            </GMapMap>
+          </div>
         </div>
       </div>
     </div>
   </div>
-
-  <div class="b-example-divider mb-0"></div>
-  <GMapMap id="googleMap"
-      :center="center"
-      :zoom="17"
-      style="width: 100%; height: 500px"
-  >
-    <GMapMarker
-        :key="index"
-        v-for="(m, index) in markers"
-        :position="m.position"
-        :clickable="true"
-        :draggable="false"
-        @click="openMarker(m.idx)"
-    >
-      <GMapInfoWindow
-        :opened="openedMarkerID === m.idx || m.infoWindoOpen"
-      >
-        <div class="card">
-          <div class="card-header">
-            영업 상태 : {{m.opennow}}
-          </div>
-          <div class="card-body">
-            <h5 class="card-title">{{m.name}}</h5>
-            <p class="card-text">
-              평점 : {{m.rating}} (총 리뷰 {{m.userRatingsTotal}} 건)
-            </p>
-            <p class="card-text">
-              가격대 : {{m.priceLevel}}
-            </p>
-            <p class="card-text">
-              <b>{{m.name}}</b>{{m.content}}
-            </p>
-          </div>
-        </div>
-      </GMapInfoWindow>
-    </GMapMarker>
-  </GMapMap>
+  
+  <loading v-model:active="isLoading" :can-cancel="false" :is-full-page="fullPage"/>
 </template>
 
 <script>
@@ -180,8 +191,6 @@ export default {
               r.price_level == 4 ? '비쌈' : 
               r.price_level == 5 ? '매우 비쌈' : '알 수 없음';
           }
-          let infoWindoOpen = false;
-          if(index == random) infoWindoOpen =true;
           const marker = {
             idx : index,
             position : r.geometry.location, 
@@ -193,10 +202,10 @@ export default {
             rating : r.rating, 
             userRatingsTotal : r.user_ratings_total,
             priceLevel : priceLevel,
-            infoWindoOpen : infoWindoOpen
           };
           markers.push(marker);
         });
+        this.openMarker(random);
         this.markers = markers;
       })
       .catch(err=>{
@@ -205,17 +214,10 @@ export default {
       });
     },
     //바로 뽑기
-    makeMarkersSelect(){
+    async makeMarkersSelect(){
       this.isLoading = true;
-      this.makeMarkers();
-      try{
-        setTimeout(() => {
-          this.isLoading = false;
-        }, 1000)
-      }catch(err){
-        alert(err);
-        this.isLoading = false;
-      }
+      await this.makeMarkers();
+      this.isLoading = false;
     },
     //marker open infoWindow
     openMarker(idx){

@@ -8,13 +8,13 @@
         <div class="collapse navbar-collapse" id="navbarCollapse">
           <ul class="navbar-nav me-auto mb-2 mb-md-0">
             <li class="nav-item">
-              <router-link class="nav-link" to="/eats">점심뽑기</router-link>
+              <router-link class="nav-link" to="/eats">뽑기</router-link>
             </li>
             <li class="nav-item">
-              <router-link class="nav-link" to="/about">현주누나</router-link>
+              <router-link class="nav-link" to="/about">준비중1</router-link>
             </li>
             <li class="nav-item">
-              <router-link class="nav-link" to="/about">지은누나</router-link>
+              <router-link class="nav-link" to="/about">준비중2</router-link>
             </li>
             <li class="nav-item">
               <router-link class="nav-link" to="/about">로그인테스트</router-link>
