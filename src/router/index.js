@@ -38,6 +38,13 @@ const routes = [
     component: () => import('../views/eats/EatsView.vue'),
     meta: {auth : false}
   },
+
+  {//지은 페이지 
+    path: '/tissue',
+    name: 'tissue',
+    component: () => import('../views/jieun/JieunView.vue'),
+    meta: {auth : false}
+  },
 ]
 
 const router = createRouter({
