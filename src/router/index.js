@@ -43,6 +43,12 @@ const routes = [
     path: '/tissue',
     name: 'tissue',
     component: () => import('../views/jieun/JieunView.vue'),
+  },
+  //
+  {
+    path: '/sunhj',
+    name: 'sunhj',
+    component: () => import('../views/sun/TmpView.vue'),
     meta: {auth : false}
   },
 ]
