@@ -38,6 +38,13 @@ const routes = [
     component: () => import('../views/eats/EatsView.vue'),
     meta: {auth : false}
   },
+  //
+  {
+    path: '/sunhj',
+    name: 'sunhj',
+    component: () => import('../views/sun/TmpView.vue'),
+    meta: {auth : false}
+  },
 ]
 
 const router = createRouter({

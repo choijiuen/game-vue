@@ -11,7 +11,7 @@
               <router-link class="nav-link" to="/eats">뽑기</router-link>
             </li>
             <li class="nav-item">
-              <router-link class="nav-link" to="/about">준비중1</router-link>
+              <router-link class="nav-link" to="/sunhj">공사중</router-link>
             </li>
             <li class="nav-item">
               <router-link class="nav-link" to="/about">준비중2</router-link>
